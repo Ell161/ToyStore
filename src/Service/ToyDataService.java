@@ -36,6 +36,14 @@ public class ToyDataService implements DataService {
         this.toys.remove(id);
     }
 
+    public Toy getToy(String id) {
+        return toys.get(id);
+    }
+
+    public Map<String, Toy> getToys() {
+        return toys;
+    }
+
     public List<String[]> getDataToys() {
         List<String[]> dataToys = new ArrayList<>();
         for (Map.Entry<String, Toy> entry : this.toys.entrySet()) {
@@ -43,6 +51,15 @@ public class ToyDataService implements DataService {
             dataToys.add(toy.getData());
         }
         return dataToys;
+    }
+
+    public Integer getCountToys() {
+        Integer countToys = 0;
+        for (Map.Entry<String, Toy> entry : this.toys.entrySet()) {
+            Toy toy = entry.getValue();
+            countToys += toy.getCount();
+        }
+        return countToys;
     }
 
     public void toysToString() {

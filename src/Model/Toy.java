@@ -1,7 +1,7 @@
 package Model;
 
 
-public class Toy extends Product {
+public class Toy extends Product implements Cloneable {
     private Double chanceOfFallingOut;
 
     public Toy(String id, String name, Integer count, Double chanceOfFallingOut) {
@@ -24,6 +24,11 @@ public class Toy extends Product {
                 String.valueOf(this.getCount()),
                 String.valueOf(this.getChanceOfFallingOut())
         };
+    }
+
+    @Override
+    public Object clone() throws CloneNotSupportedException {
+        return super.clone();
     }
 
     @Override

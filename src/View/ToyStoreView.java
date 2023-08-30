@@ -6,13 +6,13 @@ public class ToyStoreView extends BaseView {
         String itemMenu;
         try {
             itemMenu = getData("""
-                [1] Display a list of toys
-                [2] Add a new toy
-                [3] Change the chance of a toy falling out
-                [4] Get a prize toy
-                [5] Exit
-                """);
-            if (!itemMenu.matches("[1-5]+"))
+                    [1] Display a list of toys
+                    [2] Add a new toy
+                    [3] Change the chance of a toy falling out
+                    [4] Get a prize toy
+                    [5] Exit
+                    """);
+            if (!itemMenu.matches("[1-5]"))
                 throw new IllegalArgumentException("Invalid input. Enter the number of the menu item..");
         } catch (IllegalArgumentException e) {
             System.out.println(e.getMessage());
@@ -68,9 +68,14 @@ public class ToyStoreView extends BaseView {
         String chanceOfFallingOut;
         try {
             chanceOfFallingOut = getData("Chance of falling out: ");
-            Double chanceOfFallingOutToDouble = Double.parseDouble(chanceOfFallingOut);
+            double chanceOfFallingOutToDouble = Double.parseDouble(chanceOfFallingOut);
+            if (chanceOfFallingOutToDouble < 0 || chanceOfFallingOutToDouble >= 100)
+                throw new IllegalArgumentException("The chance of a prize cannot be less than zero or more than one hundred percent.");
         } catch (NumberFormatException e) {
             System.out.println("Unknown data format. The chance can only be an integer or a real number. Please try again.");
+            return getChanceOfFallingOut();
+        } catch (IllegalArgumentException e) {
+            System.out.println(e.getMessage());
             return getChanceOfFallingOut();
         }
         return chanceOfFallingOut;

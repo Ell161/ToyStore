@@ -2,6 +2,7 @@ package Service;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -15,6 +16,8 @@ public class CsvFileService implements FileService {
     public List<String[]> readFile(String filename) {
         List<String[]> data = new ArrayList<>();
         try {
+            File file = new File(filename);
+            if (!file.exists()) return null;
             BufferedReader br = Files.newBufferedReader(Paths.get(filename));
             String line;
             while ((line = br.readLine()) != null) {
@@ -23,8 +26,6 @@ public class CsvFileService implements FileService {
                 data.add(tokens);
             }
             br.close();
-
-
         } catch (IOException ex) {
             ex.printStackTrace();
         }
@@ -44,7 +45,6 @@ public class CsvFileService implements FileService {
             }
 
             writer.close();
-
         } catch (IOException ex) {
             ex.printStackTrace();
         }
