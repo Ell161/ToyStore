@@ -12,6 +12,10 @@ import java.util.List;
 public class CsvFileService implements FileService {
     private static final String delimiter = ";";
 
+    /**
+     * @param filename string value of the file path
+     * @return list of arrays of string values obtained when reading from a file
+     */
     @Override
     public List<String[]> readFile(String filename) {
         List<String[]> data = new ArrayList<>();
@@ -32,6 +36,11 @@ public class CsvFileService implements FileService {
         return data;
     }
 
+    /**
+     * @param filename string value of the file path
+     * @param data     list of arrays of string values
+     * @param header   array of string values of table column names
+     */
     @Override
     public void writeToFile(String filename, List<String[]> data, String[] header) {
         try {

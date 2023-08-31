@@ -17,19 +17,29 @@ public class ToyStoreController {
     ToyStoreView view = new ToyStoreView();
 
     public void start() {
-        setDataToys();
+        setListToys();
         setListPrizeToys();
-        String menuItem = view.getMenuItem();
-        switch (menuItem) {
-            case "1" -> dataService.toysToString();
-            case "2" -> setToy();
-            case "3" -> setChanceOfFallingOut();
-            case "4" -> getPrizeToy();
-            case "5" -> System.out.println("The program is completed.");
+        int program = 1;
+        while (program == 1) {
+            String menuItem = view.getMenuItem();
+            switch (menuItem) {
+                case "1" -> dataService.toysToString();
+                case "2" -> setToy();
+                case "3" -> setChanceOfFallingOut();
+                case "4" -> getPrizeToy();
+                case "5" -> {
+                    System.out.println("The program is completed.");
+                    program = 0;
+                }
+            }
         }
     }
 
-    private void setDataToys() {
+
+    /**
+     * @apiNote The method reads data from a file and creates a list of instances of the Toy class
+     */
+    private void setListToys() {
         List<String[]> dataToys = fileService.readFile(fileDataToys);
         if (dataToys != null) {
             if (dataToys.size() > 1) {
@@ -47,6 +57,10 @@ public class ToyStoreController {
         }
     }
 
+    /**
+     * @apiNote The method requests the toy's id, name, quantity and chance of falling out
+     * and creates an instance of the Toy class. Writes new data to a file.
+     */
     private void setToy() {
         Map<String, String> toy = new HashMap<>() {{
             put("id", view.getId());
@@ -58,12 +72,16 @@ public class ToyStoreController {
             dataService.create(toy);
         } catch (IllegalArgumentException e) {
             System.out.println(e.getMessage());
-            setToy();
         }
         List<String[]> dataToys = dataService.getDataToys();
         fileService.writeToFile(fileDataToys, dataToys, header);
+        System.out.println("\nThe information has been successfully saved!");
     }
 
+    /**
+     * @apiNote The method requests new toy's chance of falling out
+     * and updates an instance of the Toy class. Writes new data to a file.
+     */
     private void setChanceOfFallingOut() {
         String toyID = view.getId();
         Toy toy = dataService.getToy(toyID);
@@ -77,34 +95,45 @@ public class ToyStoreController {
             dataService.update(data);
             List<String[]> dataToys = dataService.getDataToys();
             fileService.writeToFile(fileDataToys, dataToys, header);
-            System.out.println("The operation was successfully completed.");
-        } else System.out.println("A product with this ID does not exist.");
+            System.out.println("\nThe operation was successfully completed.");
+        } else System.out.println("\nA product with this ID does not exist.");
     }
 
+    /**
+     * @apiNote The method of obtaining an ordinal toy from the list of prize toys.
+     * Writes information about the received prize instance of the Toy class to a file.
+     */
     private void getPrizeToy() {
-        Toy prizeToy = listPrizeToys.pop();
-        int newCountToy = dataService.getToy(prizeToy.getId()).getCount() - 1;
-        if (newCountToy == 0) {
-            dataService.delete(prizeToy.getId());
-        } else {
-            Map<String, String> data = new HashMap<>() {{
-                put("id", prizeToy.getId());
-                put("count", String.valueOf(newCountToy));
-            }};
-            dataService.update(data);
-        }
+        if (listPrizeToys.isEmpty() && !dataService.getToys().isEmpty()) setListPrizeToys();
+        if (!listPrizeToys.isEmpty()) {
+            Toy prizeToy = listPrizeToys.pop();
+            int newCountToy = dataService.getToy(prizeToy.getId()).getCount() - 1;
+            if (newCountToy == 0) {
+                dataService.delete(prizeToy.getId());
+            } else {
+                Map<String, String> data = new HashMap<>() {{
+                    put("id", prizeToy.getId());
+                    put("count", String.valueOf(newCountToy));
+                }};
+                dataService.update(data);
+            }
 
-        List<String[]> dataToys = dataService.getDataToys();
-        fileService.writeToFile(fileDataToys, dataToys, header);
+            List<String[]> dataToys = dataService.getDataToys();
+            fileService.writeToFile(fileDataToys, dataToys, header);
 
-        List<String[]> dataPrizeToy = new ArrayList<>();
-        if (fileService.readFile(fileDataPrizeToys) != null)
-            dataPrizeToy.addAll(fileService.readFile(fileDataPrizeToys).subList(1, fileService.readFile(fileDataPrizeToys).size()));
-        dataPrizeToy.add(prizeToy.getData());
-        fileService.writeToFile(fileDataPrizeToys, dataPrizeToy, header);
-        System.out.println("Prize toy is a " + prizeToy.getName() + ", congratulate!");
+            List<String[]> dataPrizeToy = new ArrayList<>();
+            if (fileService.readFile(fileDataPrizeToys) != null)
+                dataPrizeToy.addAll(fileService.readFile(fileDataPrizeToys).subList(1, fileService.readFile(fileDataPrizeToys).size()));
+            dataPrizeToy.add(prizeToy.getData());
+            fileService.writeToFile(fileDataPrizeToys, dataPrizeToy, header);
+            System.out.println("\nPrize toy is a " + prizeToy.getName() + "(ID " + prizeToy.getId() + "), congratulate!");
+        } else System.out.println("\nLet's have a list of toys. Enter the data.");
     }
 
+    /**
+     * @apiNote The method gets the total number of all toys, sorts them by chance of falling out
+     * and creates a prize list of instances of the Toy class.
+     */
     private void setListPrizeToys() {
         if (dataService.getToys().size() > 0) {
             ArrayList<Toy> toys = new ArrayList<>();
@@ -130,6 +159,13 @@ public class ToyStoreController {
         }
     }
 
+    /**
+     * @param toys        list of instances of the Toy class
+     * @param prizeChance a randomly generated real value of the chance of falling out
+     * @return index of the Toy class instance selected from the list
+     * @apiNote Method for selecting an instance of the Toy class from the list,
+     * the chance of falling out of which is greater than the specified one
+     */
     private Integer setPrizeToy(ArrayList<Toy> toys, double prizeChance) {
         for (int index = 0; index < toys.size(); index++) {
             if ((prizeChance < toys.get(index).getChanceOfFallingOut() / 100) && toys.get(index).getCount() > 0) {

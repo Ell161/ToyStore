@@ -2,10 +2,15 @@ package View;
 
 public class ToyStoreView extends BaseView {
 
+    /**
+     * @return integer value of the menu item selected by the user
+     * @apiNote The method displays a list of the console menu and prompts the user to select a menu item
+     */
     public String getMenuItem() {
         String itemMenu;
         try {
             itemMenu = getData("""
+                    _________________________________________
                     [1] Display a list of toys
                     [2] Add a new toy
                     [3] Change the chance of a toy falling out
@@ -21,6 +26,10 @@ public class ToyStoreView extends BaseView {
         return itemMenu;
     }
 
+    /**
+     * @return string value of the Toy class instance ID
+     * @apiNote The method asks the user for an integer value of the ID of the Toy class instance
+     */
     public String getId() {
         String id;
         try {
@@ -36,6 +45,10 @@ public class ToyStoreView extends BaseView {
         return id;
     }
 
+    /**
+     * @return a string value of the name of the Toy class instance
+     * @apiNote The method asks the user for a string value of the name of the Toy class instance
+     */
     public String getName() {
         String name;
         try {
@@ -51,11 +64,15 @@ public class ToyStoreView extends BaseView {
         return name;
     }
 
+    /**
+     * @return string value of the Toy class instance count
+     * @apiNote The method asks the user for an integer value of the count of the Toy class instance
+     */
     public String getCount() {
         String count;
         try {
             count = getData("Count: ");
-            if (!isNumeric(count))
+            if (!isNumeric(count) || Integer.parseInt(count) < 1)
                 throw new IllegalArgumentException("Only numeric values are allowed. Please try again.");
         } catch (IllegalArgumentException e) {
             System.out.println(e.getMessage());
@@ -64,6 +81,10 @@ public class ToyStoreView extends BaseView {
         return count;
     }
 
+    /**
+     * @return string value of the Toy class instance chance of falling out
+     * @apiNote The method asks the user for a number value of the chance of falling out of the Toy class instance
+     */
     public String getChanceOfFallingOut() {
         String chanceOfFallingOut;
         try {
